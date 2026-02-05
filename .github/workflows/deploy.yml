@@ -58,8 +58,17 @@ jobs:
         working-directory: ./iac
         run: npm install
 
+      - name: Bootstrap Backend Resources
+        working-directory: ./iac
+        run: |
+          chmod +x bootstrap.sh
+          ./bootstrap.sh
+          # Set the bucket name for subsequent steps
+          echo "TF_STATE_BUCKET=turbovets-terraform-state-$(aws sts get-caller-identity --query "Account" --output text)" >> $GITHUB_ENV
+
       - name: Deploy Infrastructure (Dev)
         working-directory: ./iac
         run: cdktf deploy dev --auto-approve
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}
+          TF_STATE_BUCKET: ${{ env.TF_STATE_BUCKET }}

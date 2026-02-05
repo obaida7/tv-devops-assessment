@@ -36,9 +36,10 @@ class DevOpsStack extends TerraformStack {
     const appName = `express-ts-app-${environment}`;
 
     // --- Bonus: Terraform Remote Backend ---
-    // Note: S3 buckets must be globally unique. Change this if needed.
+    const stateBucket = process.env.TF_STATE_BUCKET || `turbovets-terraform-state-${environment}`;
+
     new S3Backend(this, {
-      bucket: `turbovets-terraform-state-${environment}`,
+      bucket: stateBucket,
       key: `terraform.tfstate`,
       region: region,
       dynamodbTable: "terraform-lock",
