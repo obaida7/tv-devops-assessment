@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    name: Deploy to Dev
     runs-on: ubuntu-latest
 
     steps:
@@ -29,7 +30,7 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY_NAME }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./app
+          docker build --platform linux/amd64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest ./app
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
@@ -40,12 +41,15 @@ jobs:
           cache: "npm"
           cache-dependency-path: iac/package-lock.json
 
-      - name: Install CDKTF Dependencies
+      - name: Install CDKTF CLI
+        run: npm install -g cdktf-cli@latest
+
+      - name: Install Dependencies
         working-directory: ./iac
         run: npm install
 
-      - name: Deploy Infrastructure
+      - name: Deploy Infrastructure (Dev)
         working-directory: ./iac
-        run: npx cdktf deploy --auto-approve
+        run: cdktf deploy dev --auto-approve
         env:
           AWS_REGION: ${{ secrets.AWS_REGION }}

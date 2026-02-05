@@ -1,5 +1,7 @@
 # DevOps Assessment – Full Lifecycle Challenge
 
+![Build and Deploy](https://github.com/obaida7/tv-devops-assessment/actions/workflows/deploy.yml/badge.svg)
+
 This repository contains the solution for the TurboVets DevOps Assessment.
 
 ## Project Structure
